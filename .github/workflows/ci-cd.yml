@@ -1,0 +1,42 @@
+name: Python CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Build Docker Image
+        run: |
+          docker build -t hannahanto/my-flask-app:latest .
+          docker tag hannahanto/my-flask-app:latest hannahanto/my-flask-app:latest
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.secret2 }}" | docker login -u hannahanto --password-stdin
+
+      - name: Push Docker Image to Docker Hub
+        run: docker push hannahanto/my-flask-app:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pull Docker image
+        run: docker pull hannahanto/my-flask-app:latest
+
+      - name: Stop Existing Container
+        run: docker stop my-flask-app_container || true
+
+      - name: Remove Existing Container
+        run: docker rm my-flask-app_container || true
+
+      - name: Deploy Docker Container
+        run: docker run -d -p 5000:5000 --name my-flask-app_container hannahanto/my-flask-app:latest
