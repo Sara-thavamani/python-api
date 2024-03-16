@@ -15,14 +15,14 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t hannahanto/my-flask-app:latest .
-          docker tag hannahanto/my-flask-app:latest hannahanto/my-flask-app:latest
+          docker build -t saralaaa/pythonapi:latest .
+          docker tag saralaaa/pythonapi:latest hannahanto/pythonapi:latest
 
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.PYTHON }}" | docker login -u hannahanto --password-stdin
+        run: echo "${{ secrets.PYTHON }}" | docker login -u saralaaa --password-stdin
 
       - name: Push Docker Image to Docker Hub
-        run: docker push hannahanto/my-flask-app:latest
+        run: docker push saralaaa/pythonapi:latest
 
   deploy:
     needs: build
